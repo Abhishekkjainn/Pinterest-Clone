@@ -14,7 +14,7 @@ const handleGoogleLogin = async () => {
 };
 
 export default function DeciderPage() {
-  return loggedin ? <LoginScreen /> : <MainPage />;
+  return loggedin ? <MainPage /> : <LoginScreen />;
 }
 
 function LoginScreen() {
