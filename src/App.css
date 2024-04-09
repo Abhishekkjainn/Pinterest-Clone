@@ -1,6 +1,7 @@
 body{
   margin: 0;
   padding: 0;
+  font-family: 'Poppins';
 }
 .mainLoginpage{
   overflow: hidden;
@@ -15,10 +16,31 @@ body{
 .pintrestlogo{
   width: 200px;
 }
+.taglineLogin{
+  font-size: 22px;
+  font-weight: 600;
+  color: black;
+}
 .googleLoginButton{
   width: 350px;
   height: 65px;
-  /* background-color: aqua */
-  border-radius: 40px;
-  border: 1px solid black;
+  background-color: rgb(236, 236, 236);
+  border-radius: 20px;
+  border: 1px solid grey;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.googleLoginButton:hover{
+  cursor: pointer;
+}
+.googleLoginIcon{
+  width: 30px;
+  margin-right: 10px;
+}
+.logintext{
+  margin-left: 10px;
+  color: grey;
+  font-size: 18px;
+  font-weight: 600;
 }
