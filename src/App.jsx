@@ -3,7 +3,11 @@ import './App.css';
 import LoginPage from './loginpage/loginPage';
 
 function App() {
-  return <></>;
+  return (
+    <>
+      <LoginPage />
+    </>
+  );
 }
 
 export default App;
