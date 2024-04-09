@@ -1,4 +1,5 @@
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { auth } from '../../firebase';
 import '../App.css';
 
 export default function LoginPage() {
