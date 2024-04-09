@@ -7,7 +7,7 @@ export default function LoginPage() {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    localStorage.setItem('displayName');
+    // localStorage.setItem('displayName');
     console.log(user.displayName);
     console.log('Logged in Succesfully');
   };
