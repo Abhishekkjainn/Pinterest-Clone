@@ -1,0 +1,24 @@
+body{
+  margin: 0;
+  padding: 0;
+}
+.mainLoginpage{
+  overflow: hidden;
+  height: 100vh;
+  width: 100%;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.pintrestlogo{
+  width: 200px;
+}
+.googleLoginButton{
+  width: 350px;
+  height: 65px;
+  /* background-color: aqua */
+  border-radius: 40px;
+  border: 1px solid black;
+}
