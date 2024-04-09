@@ -1,23 +1,51 @@
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { useState, useEffect } from 'react';
+import {
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+} from 'firebase/auth';
 import { auth } from '../../firebase';
 import '../App.css';
 import MainPage from '../mainpage/mainPage';
 
-var loggedin = false;
-const handleGoogleLogin = async () => {
-  const provider = new GoogleAuthProvider();
-  const result = await signInWithPopup(auth, provider);
-  const user = result.user;
-  loggedin = true;
-  console.log(user.displayName);
-  console.log('Logged in Succesfully');
-};
-
 export default function DeciderPage() {
-  return loggedin ? <MainPage /> : <LoginScreen />;
+  const [loggedin, setLoggedin] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setLoggedin(true);
+        console.log(user.displayName);
+        console.log('Already logged in');
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      setLoggedin(true);
+      console.log(user.displayName);
+      console.log('Logged in Successfully');
+    } catch (error) {
+      console.error('Error logging in:', error.message);
+    }
+  };
+
+  return loggedin ? (
+    <MainPage />
+  ) : (
+    <LoginScreen handleGoogleLogin={handleGoogleLogin} />
+  );
 }
 
-function LoginScreen() {
+function LoginScreen({ handleGoogleLogin }) {
   return (
     <div className="mainLoginpage">
       <div className="pintrestlogologin">
@@ -27,7 +55,7 @@ function LoginScreen() {
           className="pintrestlogo"
         />
       </div>
-      <p className="taglineLogin">Welcome to Pintrest</p>
+      <p className="taglineLogin">Welcome to Pinterest</p>
       <div className="googleLoginButton" onClick={handleGoogleLogin}>
         <img
           src="googleicon.png"

@@ -44,3 +44,16 @@ body{
   font-size: 18px;
   font-weight: 600;
 }
+
+/*MainPage*/
+
+.MainPage{
+  width: 100%;
+  height: 100vh;
+  background-color: aquamarine;
+}
+.Header{
+  width: 100%;
+  height: 80px;
+  background-color: white;
+}
