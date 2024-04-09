@@ -3,14 +3,19 @@ import { auth } from '../../firebase';
 import '../App.css';
 
 export default function LoginPage() {
-  const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    console.log(user.displayName);
-    console.log('Logged in Succesfully');
-  };
+  return loggedin ? <LoginScreen /> : <MainPage />;
+}
+var loggedin = false;
+const handleGoogleLogin = async () => {
+  const provider = new GoogleAuthProvider();
+  const result = await signInWithPopup(auth, provider);
+  const user = result.user;
+  loggedin = true;
+  console.log(user.displayName);
+  console.log('Logged in Succesfully');
+};
 
+function LoginScreen() {
   return (
     <div className="mainLoginpage">
       <div className="pintrestlogologin">
