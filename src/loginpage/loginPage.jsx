@@ -1,10 +1,8 @@
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '../../firebase';
 import '../App.css';
+import MainPage from '../mainpage/mainPage';
 
-export default function LoginPage() {
-  return loggedin ? <LoginScreen /> : <MainPage />;
-}
 var loggedin = false;
 const handleGoogleLogin = async () => {
   const provider = new GoogleAuthProvider();
@@ -14,6 +12,10 @@ const handleGoogleLogin = async () => {
   console.log(user.displayName);
   console.log('Logged in Succesfully');
 };
+
+export default function DeciderPage() {
+  return loggedin ? <LoginScreen /> : <MainPage />;
+}
 
 function LoginScreen() {
   return (
