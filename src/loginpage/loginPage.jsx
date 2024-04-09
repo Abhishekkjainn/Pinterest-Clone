@@ -16,6 +16,9 @@ export default function DeciderPage() {
       if (user) {
         setLoggedin(true);
         console.log(user.displayName);
+        localStorage.setItem('username', user.displayName);
+        localStorage.setItem('useremail', user.email);
+        localStorage.setItem('userphoto', user.photoURL);
         console.log('Already logged in');
       }
     });

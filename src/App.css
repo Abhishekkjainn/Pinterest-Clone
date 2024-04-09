@@ -50,10 +50,228 @@ body{
 .MainPage{
   width: 100%;
   height: 100vh;
-  background-color: aquamarine;
+  /* background-color: aquamarine; */
 }
 .Header{
   width: 100%;
   height: 80px;
   background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
 }
+.firstContainer,.thirdContainer{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 20%;
+  height: 100%;
+}
+.firstContainer{
+  width: 32%;
+}
+.secondContainer{
+  width: 100vw;
+  /* background-color: aqua; */
+  margin-left: 20px;
+  margin-right: 20px;
+  height: 45px;
+}
+
+.headerLogo{
+  width: 25px;
+  padding-left: 15px;
+}
+.tag{
+  font-weight: 600;
+  font-size: 14px;
+  transition: 0.5s;
+}
+.tag:hover,.activetag:hover{
+  cursor: pointer;
+}
+.activetag{
+  background-color: black;
+  color: white;
+  border-radius: 40px;
+  padding: 15px;
+}
+
+/*searchbar*/
+.searchBar{
+  height: 60px;
+  background-color: rgb(233, 233, 233);
+  width: 100%;
+  border-radius: 40px;
+  height: 100%;
+  border: none;
+}
+.searchBar::placeholder{
+  color: grey;
+  font-size: 16px;
+  font-weight: 600;
+  padding-left: 20px;
+}
+.userprofileimage{
+  width: 30px;
+  height: 30px;
+  border-radius: 40px;
+}
+.thirdsectionimage{
+  width: 22px;
+  height: 22px;
+}
+.downarrow{
+  width: 15px;
+}
+
+
+/*Homepage Styling*/
+
+.homepage {
+  padding-top: 100px;
+  padding-left: 2%;
+  padding-right: 2%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.column {
+  flex-grow: 1;
+  max-width: calc(16% - 10px); /* Adjust based on desired column width */
+}
+
+.imagediv {
+  background-color: #ececec;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 20px;
+}
+/*CreatepageStyling*/
+
+
+.createpage{
+  width: 100%;
+  height: max-content;
+  padding-top: 80px;
+  /* background-color: aqua; */
+}
+.createpinhead{
+  position: fixed;
+  z-index: 10;
+  width: 100%;
+  border-top: 1px solid rgba(0, 0, 0, 0.200);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.200);
+  height: 80px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+}
+.headtext{
+  padding-left: 30px;
+}
+.publishbutton{
+  margin-right: 30px;
+  width: auto;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 40px;
+  background-color: rgb(224, 66, 66);
+  font-size: 16px;
+  color: white;
+}
+.publishbutton:hover{
+  cursor: pointer;
+}
+
+.uploaddiv{
+  padding-top: 30px;
+  margin-top: 82px;
+  width: 100%;
+  height: max-content;
+  /* background-color: aquamarine; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* flex-direction: column; */
+}
+.uploadimagediv{
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.displaydiv{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+.chooseimagebutton{
+padding-top: 20px;
+padding-bottom: 30px;
+
+}
+.uploaddetailsdiv{
+  width: 50%;
+  height: 100%;
+}
+.displayimage{
+  max-width:60%;
+  max-height: 60vh;
+  /* margin-left: 30px; */
+  border-radius: 30px;
+  object-fit: cover;
+}
+
+/*details*/
+.input {
+  max-width: 80%;
+  width: 100%;
+  height: 44px;
+  /* background-color: #05060f0a; */
+  border: 2px solid grey;
+  border-radius:15px;
+  padding: 0 1rem;
+  border: 2px solid rgb(184, 184, 184);
+  font-size: 1rem;
+  transition: border-color .3s cubic-bezier(.25,.01,.25,1) 0s, color .3s cubic-bezier(.25,.01,.25,1) 0s,background .2s cubic-bezier(.25,.01,.25,1) 0s;
+}
+
+.label {
+  display: block;
+  margin-bottom: .3rem;
+  margin-top: 20px;
+  font-size: .9rem;
+  font-weight: bold;
+  color: #05060f99;
+  margin-left: 10px;
+  transition: color .3s cubic-bezier(.25,.01,.25,1) 0s;
+}
+
+.input:hover, .input:focus, .input-group:hover .input {
+  outline: none;
+  border-color: #05060f;
+}
+
+.input-group:hover .label, .input:focus {
+  color: #05060fc2;
+}
+
+
+/*Explorepage Styling*/
