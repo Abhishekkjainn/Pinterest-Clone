@@ -42,7 +42,7 @@ export default function DeciderPage() {
   };
 
   return loggedin ? (
-    <MainPage />
+    <MainPage setLoggedin={setLoggedin} />
   ) : (
     <LoginScreen handleGoogleLogin={handleGoogleLogin} />
   );

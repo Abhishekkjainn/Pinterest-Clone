@@ -4,9 +4,12 @@ import { imageDB } from '../../firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { firestore } from '../../firebase';
+
+import { auth } from '../../firebase';
+import { firebase } from '../../firebase';
 import { v4 as uuidv4 } from 'uuid';
 
-export default function MainPage() {
+export default function MainPage({ setLoggedin }) {
   const [activeTag, setActiveTag] = useState('home');
 
   const handleTagClick = (tag) => {
@@ -15,16 +18,48 @@ export default function MainPage() {
 
   return (
     <div className="MainPage">
-      <HeaderMainPage activeTag={activeTag} handleTagClick={handleTagClick} />
+      <HeaderMainPage
+        activeTag={activeTag}
+        handleTagClick={handleTagClick}
+        setLoggedin={setLoggedin}
+      />
       <MainScreenDecider activeTag={activeTag} />
     </div>
   );
 }
 
-function HeaderMainPage({ activeTag, handleTagClick }) {
+function HeaderMainPage({ activeTag, handleTagClick, setLoggedin }) {
   const usernameheader = localStorage.getItem('username');
   const useremailheader = localStorage.getItem('useremail');
   const userimageheader = localStorage.getItem('userphoto');
+  var menu = false;
+
+  const showmenu = () => {
+    menu = !menu;
+    if (menu == true) {
+      document.getElementById('menubar').style.display = 'flex';
+    } else {
+      document.getElementById('menubar').style.display = 'none';
+    }
+  };
+
+  const handleSignOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        // Sign-out successful
+        console.log('Sign-out successful');
+        // Clear local storage
+        localStorage.removeItem('username');
+        localStorage.removeItem('useremail');
+        localStorage.removeItem('userphoto');
+        setLoggedin(false);
+      })
+      .catch((error) => {
+        // An error occurred
+        console.error('Error signing out:', error);
+      });
+  };
 
   return (
     <div className="Header">
@@ -64,33 +99,59 @@ function HeaderMainPage({ activeTag, handleTagClick }) {
           name="search"
           id="Searchbar"
           className="searchBar"
-          placeholder="Search"
+          placeholder="🔎 Search"
         />
       </div>
       <div className="thirdContainer">
-        <div className="notification">
-          <img
-            src="notification.png"
-            alt="notification"
-            className="thirdsectionimage"
-          />
+        <div className="one">
+          <div className="notification">
+            <img
+              src="notification.png"
+              alt="notification"
+              className="thirdsectionimage"
+            />
+          </div>
+          <div className="notification">
+            <img
+              src="chat.png"
+              alt="notification"
+              className="thirdsectionimage"
+            />
+          </div>
+          <div className="userprofileimage">
+            <img
+              src={userimageheader}
+              alt="userimage"
+              className="userprofileimage"
+            />
+          </div>
+          <div className="notification">
+            <img
+              src="down.png"
+              alt="notification"
+              className="downarrow"
+              onClick={showmenu}
+            />
+          </div>
         </div>
-        <div className="notification">
-          <img
-            src="chat.png"
-            alt="notification"
-            className="thirdsectionimage"
-          />
-        </div>
-        <div className="userprofileimage">
-          <img
-            src={userimageheader}
-            alt="userimage"
-            className="userprofileimage"
-          />
-        </div>
-        <div className="notification">
-          <img src="down.png" alt="notification" className="downarrow" />
+        <div className="two" id="menubar">
+          <div className="personalinfo">
+            <div className="personalprofileimage">
+              <img
+                src={userimageheader}
+                alt="userimage"
+                className="personalprofileimageimg"
+              />
+            </div>
+            <div className="personaprofiledetails">
+              <div className="personalprofilename">{usernameheader}</div>
+              <div className="personalprofileemail">{useremailheader}</div>
+            </div>
+          </div>
+
+          <div className="signoutbutton" onClick={handleSignOut}>
+            Sign Out
+          </div>
         </div>
       </div>
     </div>
@@ -109,35 +170,7 @@ function MainScreenDecider({ activeTag }) {
 
 function HomePage() {
   const [items, setItems] = useState([]);
-
-  // const retrievedData = [
-  //   {
-  //     id: 1,
-  //     title: 'Abhishek Jain',
-  //     accountid: 'jainabhishek1904@gmail.com',
-  //     description: 'Best image in the world',
-  //     displayimageurl:
-  //       'https://i.pinimg.com/564x/df/54/e1/df54e1c7a6788dfa6a270d9526299509.jpg',
-  //     link: 'https://abhishekjain.vercel.app',
-  //     maxht: '300px',
-  //     name: 'Abhishek Jain',
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'Abhishek Jain',
-  //     accountid: 'jainabhishek1904@gmail.com',
-  //     description: 'Best image in the world',
-  //     displayimageurl:
-  //       'https://i.pinimg.com/564x/02/ec/ac/02ecacb3216d504e5c9c3c58a87ca2bd.jpg',
-  //     link: 'https://abhishekjain.vercel.app',
-  //     maxht: '300px',
-  //     name: 'Abhishek Jain',
-  //   },
-  // ];
-
-  // useEffect(() => {
-  //   setItems(retrievedData);
-  // }, []);
+  var ind = 0;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -154,7 +187,6 @@ function HomePage() {
         // Loop through each document and extract data
 
         querySnapshot.forEach((doc) => {
-          var ind = 0;
           const data = doc.data();
           fetchedData.push({
             id: ind, // Document ID as unique identifier
