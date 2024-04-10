@@ -1,7 +1,10 @@
 import '../App.css';
 import React, { useState, useEffect } from 'react';
 import { imageDB } from '../../firebase';
-import { ref } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { collection, addDoc } from 'firebase/firestore';
+import { firestore } from '../../firebase';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function MainPage() {
   const [activeTag, setActiveTag] = useState('home');
@@ -161,6 +164,7 @@ function ExplorePage() {
 
 function CreatePage() {
   const [image, setImage] = useState(null);
+  const [imageurl, setImageUrl] = useState(null);
   const handleImageChange = (event) => {
     const selectedFile = event.target.files[0];
     setImage(selectedFile);
@@ -176,15 +180,94 @@ function CreatePage() {
   const placeholderimage =
     'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=';
 
+  const uniqueid = uuidv4();
   const uploadpost = () => {
-    console.log('submitted Succesfully');
+    //to upload image
+    const imageref = ref(
+      imageDB,
+      `files/${localStorage.getItem('useremail')}_${uniqueid}`
+    );
+    uploadBytes(imageref, image)
+      .then(() => {
+        console.log('Image uploaded successfully');
+        getDownloadURL(imageref)
+          .then((url) => {
+            console.log(url);
+            setImageUrl(url);
+            setImage(null);
+          })
+          .catch((error) => {
+            console.log(error);
+            setImageUrl(null);
+            setImage(null);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+        setImageUrl(url);
+        setImage(null);
+      });
+  };
+
+  console.log(imageurl, 'uploadedimage');
+
+  //   Function to upload data to Firestore
+  const uploadDataToFirestore = async (
+    title,
+    description,
+    link,
+    imageUrl,
+    account,
+    displayname
+  ) => {
+    try {
+      // Reference to the Firestore collection
+      const firestoreCollection = collection(firestore, 'posts');
+
+      // Add a new document with the provided data
+      const docRef = await addDoc(firestoreCollection, {
+        title: title,
+        description: description,
+        link: link,
+        imageUrl: imageUrl,
+        account: account,
+        displayname: displayname,
+      });
+      docRef.id = account + imageUrl;
+      console.log('Document written with ID: ', docRef.id);
+      print(title, description, link, imageUrl, account, displayname);
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
+  };
+
+  const gettitle = () => {
+    return document.getElementById('title').value;
+  };
+  const getdesc = () => {
+    return document.getElementById('description').value;
+  };
+  const getlink = () => {
+    return document.getElementById('link').value;
   };
 
   return (
     <div className="createpage">
       <div className="createpinhead">
         <div className="headtext">Create Pin</div>
-        <div className="publishbutton" onClick={uploadpost}>
+        <div
+          className="publishbutton"
+          onClick={() =>
+            uploadDataToFirestore(
+              gettitle(),
+              getdesc(),
+              getlink(),
+              'image',
+              localStorage.getItem('useremail'),
+              localStorage.getItem('username')
+            )
+          }
+        >
           Publish
         </div>
       </div>
@@ -224,7 +307,7 @@ function CreatePage() {
               name="Email"
               id="title"
               class="input"
-              type="email"
+              type="text"
             />
             <div></div>
           </div>
@@ -235,7 +318,7 @@ function CreatePage() {
               name="Email"
               id="description"
               class="input"
-              type="email"
+              type="text"
               draggable
             />
             <div></div>
@@ -247,7 +330,7 @@ function CreatePage() {
               name="Email"
               id="link"
               class="input"
-              type="email"
+              type="text"
             />
             <div></div>
           </div>
