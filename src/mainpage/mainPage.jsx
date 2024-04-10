@@ -2,10 +2,9 @@ import '../App.css';
 import React, { useState, useEffect } from 'react';
 import { imageDB } from '../../firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { firestore } from '../../firebase';
 import { v4 as uuidv4 } from 'uuid';
-import Popup from 'reactjs-popup';
 
 export default function MainPage() {
   const [activeTag, setActiveTag] = useState('home');
@@ -111,21 +110,74 @@ function MainScreenDecider({ activeTag }) {
 function HomePage() {
   const [items, setItems] = useState([]);
 
-  const dummyData = [
-    { id: 1, text: 'Item 1', height: 200 },
-    { id: 2, text: 'Item 2', height: 150 },
-    { id: 3, text: 'Item 3', height: 270 },
-    { id: 4, text: 'Item 4', height: 180 },
-    { id: 5, text: 'Item 5', height: 220 },
-    { id: 6, text: 'Item 6', height: 190 },
-    { id: 7, text: 'Item 7', height: 210 },
-    { id: 8, text: 'Item 8', height: 240 },
-    { id: 9, text: 'Item 9', height: 170 },
-    { id: 10, text: 'Item 10', height: 200 },
-  ];
+  // const retrievedData = [
+  //   {
+  //     id: 1,
+  //     title: 'Abhishek Jain',
+  //     accountid: 'jainabhishek1904@gmail.com',
+  //     description: 'Best image in the world',
+  //     displayimageurl:
+  //       'https://i.pinimg.com/564x/df/54/e1/df54e1c7a6788dfa6a270d9526299509.jpg',
+  //     link: 'https://abhishekjain.vercel.app',
+  //     maxht: '300px',
+  //     name: 'Abhishek Jain',
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'Abhishek Jain',
+  //     accountid: 'jainabhishek1904@gmail.com',
+  //     description: 'Best image in the world',
+  //     displayimageurl:
+  //       'https://i.pinimg.com/564x/02/ec/ac/02ecacb3216d504e5c9c3c58a87ca2bd.jpg',
+  //     link: 'https://abhishekjain.vercel.app',
+  //     maxht: '300px',
+  //     name: 'Abhishek Jain',
+  //   },
+  // ];
+
+  // useEffect(() => {
+  //   setItems(retrievedData);
+  // }, []);
 
   useEffect(() => {
-    setItems(dummyData);
+    const fetchData = async () => {
+      try {
+        // Reference to the Firestore collection
+        const postsCollectionRef = collection(firestore, 'posts');
+
+        // Retrieve documents from the collection
+        const querySnapshot = await getDocs(postsCollectionRef);
+
+        // Initialize an array to store fetched data
+        const fetchedData = [];
+
+        // Loop through each document and extract data
+
+        querySnapshot.forEach((doc) => {
+          var ind = 0;
+          const data = doc.data();
+          fetchedData.push({
+            id: ind, // Document ID as unique identifier
+            title: data.title,
+            accountid: data.email,
+            description: data.description,
+            displayimageurl: data.imageUrl, // Assuming imageUrl is the field name in your Firestore document
+            link: data.link,
+            maxht: '450px',
+            name: data.displayName, // Assuming displayName is the field name in your Firestore document
+          });
+          ind++;
+        });
+
+        // Set the state with fetched data
+        setItems(fetchedData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    // Call the fetchData function
+    fetchData();
   }, []);
 
   // Calculate column heights
@@ -146,9 +198,15 @@ function HomePage() {
             <div
               key={item.id}
               className="imagediv"
-              style={{ height: `${item.height}px` }}
+              style={{
+                maxWidth: '100%',
+              }}
             >
-              {item.text}
+              <img
+                src={item.displayimageurl}
+                alt=""
+                className="displayimageimage"
+              />
             </div>
           ))}
         </div>
