@@ -5,6 +5,8 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
 import { firestore } from '../../firebase';
 import { v4 as uuidv4 } from 'uuid';
+import { Snackbar } from '@mui/material';
+// import { MuiAlert } from '@mui/material';
 
 export default function MainPage() {
   const [activeTag, setActiveTag] = useState('home');
@@ -114,7 +116,7 @@ function HomePage() {
   const dummyData = [
     { id: 1, text: 'Item 1', height: 200 },
     { id: 2, text: 'Item 2', height: 150 },
-    { id: 3, text: 'Item 3', height: 230 },
+    { id: 3, text: 'Item 3', height: 270 },
     { id: 4, text: 'Item 4', height: 180 },
     { id: 5, text: 'Item 5', height: 220 },
     { id: 6, text: 'Item 6', height: 190 },
@@ -162,9 +164,17 @@ function ExplorePage() {
   return <div>Explorepage</div>;
 }
 
+var imageuploadurl = '';
+
 function CreatePage() {
   const [image, setImage] = useState(null);
   const [imageurl, setImageUrl] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   const handleImageChange = (event) => {
     const selectedFile = event.target.files[0];
     setImage(selectedFile);
@@ -181,35 +191,33 @@ function CreatePage() {
     'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=';
 
   const uniqueid = uuidv4();
-  const uploadpost = () => {
+
+  const uploadpost = async () => {
     //to upload image
     const imageref = ref(
       imageDB,
       `files/${localStorage.getItem('useremail')}_${uniqueid}`
     );
-    uploadBytes(imageref, image)
+    await uploadBytes(imageref, image)
       .then(() => {
         console.log('Image uploaded successfully');
+
         getDownloadURL(imageref)
           .then((url) => {
             console.log(url);
+            localStorage.setItem('imgurl', url);
             setImageUrl(url);
-            setImage(null);
+            // imageuploadurl = url;
+            // setImage(null);
           })
           .catch((error) => {
             console.log(error);
-            setImageUrl(null);
-            setImage(null);
           });
       })
       .catch((error) => {
         console.log(error);
-        setImageUrl(url);
-        setImage(null);
       });
   };
-
-  console.log(imageurl, 'uploadedimage');
 
   //   Function to upload data to Firestore
   const uploadDataToFirestore = async (
@@ -222,6 +230,7 @@ function CreatePage() {
   ) => {
     try {
       // Reference to the Firestore collection
+      // uploadpost;
       const firestoreCollection = collection(firestore, 'posts');
 
       // Add a new document with the provided data
@@ -232,10 +241,10 @@ function CreatePage() {
         imageUrl: imageUrl,
         account: account,
         displayname: displayname,
+        id: account + imageUrl,
       });
-      docRef.id = account + imageUrl;
+
       console.log('Document written with ID: ', docRef.id);
-      print(title, description, link, imageUrl, account, displayname);
     } catch (error) {
       console.error('Error adding document: ', error);
     }
@@ -250,23 +259,30 @@ function CreatePage() {
   const getlink = () => {
     return document.getElementById('link').value;
   };
-
   return (
     <div className="createpage">
       <div className="createpinhead">
         <div className="headtext">Create Pin</div>
         <div
           className="publishbutton"
-          onClick={() =>
-            uploadDataToFirestore(
-              gettitle(),
-              getdesc(),
-              getlink(),
-              'image',
-              localStorage.getItem('useremail'),
-              localStorage.getItem('username')
-            )
-          }
+          onClick={async () => {
+            uploadpost(),
+              uploadDataToFirestore(
+                gettitle(),
+                getdesc(),
+                getlink(),
+
+                localStorage.getItem('imgurl'),
+                // imageUrlfinal,
+                localStorage.getItem('useremail'),
+                localStorage.getItem('username')
+              ).then(() => {
+                document.getElementById('title').value = '';
+                document.getElementById('description').value = '';
+                document.getElementById('link').value = '';
+                setImage(null);
+              });
+          }}
         >
           Publish
         </div>
