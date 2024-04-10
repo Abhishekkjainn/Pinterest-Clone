@@ -5,8 +5,6 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
 import { firestore } from '../../firebase';
 import { v4 as uuidv4 } from 'uuid';
-import { Snackbar } from '@mui/material';
-// import { MuiAlert } from '@mui/material';
 
 export default function MainPage() {
   const [activeTag, setActiveTag] = useState('home');
@@ -112,7 +110,6 @@ function MainScreenDecider({ activeTag }) {
 function HomePage() {
   const [items, setItems] = useState([]);
 
-  // Dummy data for items
   const dummyData = [
     { id: 1, text: 'Item 1', height: 200 },
     { id: 2, text: 'Item 2', height: 150 },
@@ -127,7 +124,6 @@ function HomePage() {
   ];
 
   useEffect(() => {
-    // Update items state with dummy data
     setItems(dummyData);
   }, []);
 
@@ -163,74 +159,66 @@ function HomePage() {
 function ExplorePage() {
   return <div>Explorepage</div>;
 }
-
-var imageuploadurl = '';
+let downloadUrl = '';
 
 function CreatePage() {
-  const [image, setImage] = useState(null);
-  const [imageurl, setImageUrl] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
+  var placeholderimage =
+    'https://img.freepik.com/premium-vector/photo-icon-picture-icon-image-sign-symbol-vector-illustration_64749-4409.jpg?size=338&ext=jpg&ga=GA1.1.1700460183.1712620800&semt=sph';
+
+  // var placeholderimage =
+  //   'https://firebasestorage.googleapis.com/v0/b/pintrest-clone-f43f5.appspot.com/o/files%2Fautomatevellore%40gmail.com_1cf7dde8-e9b8-4121-8729-7bb6c1537f3e?alt=media&token=fe0c82ae-9f51-43bc-b92d-e6e020f490d2';
+
+  const uploadImageToStorage = async (file) => {
+    try {
+      // Create a reference to the storage location
+      const storageRef = ref(
+        imageDB,
+        `files/${localStorage.getItem('useremail')}_${uuidv4()}`
+      );
+
+      // Upload the file to Firebase Storage
+      await uploadBytes(storageRef, file);
+
+      // Get the download URL of the uploaded file
+      const url = await getDownloadURL(storageRef);
+
+      // Save the download URL to the global variable
+      downloadUrl = url;
+
+      // Return the download URL
+      console.log(url);
+      return url;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      return null; // Return null in case of error
+    }
+  };
+  // Function to handle file selection
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0]; // Get the first selected file
+    if (file) {
+      const reader = new FileReader(); // Create a FileReader object
+      reader.onload = async () => {
+        setSelectedImage(reader.result); // Set the selected image URL
+        const imageUrl = await uploadImageToStorage(file);
+        console.log('Download URL:', imageUrl);
+      };
+      reader.readAsDataURL(file); // Read the file as a data URL
+    }
   };
 
-  const handleImageChange = (event) => {
-    const selectedFile = event.target.files[0];
-    setImage(selectedFile);
-
-    // Optionally, you can also preview the selected image
-    const reader = new FileReader();
-    reader.onload = () => {
-      const imageDataURL = reader.result;
-      // Do something with the image data URL if needed
-    };
-    reader.readAsDataURL(selectedFile);
-  };
-  const placeholderimage =
-    'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=';
-
-  const uniqueid = uuidv4();
-
-  const uploadpost = async () => {
-    //to upload image
-    const imageref = ref(
-      imageDB,
-      `files/${localStorage.getItem('useremail')}_${uniqueid}`
-    );
-    await uploadBytes(imageref, image)
-      .then(() => {
-        console.log('Image uploaded successfully');
-
-        getDownloadURL(imageref)
-          .then((url) => {
-            console.log(url);
-            localStorage.setItem('imgurl', url);
-            setImageUrl(url);
-            // imageuploadurl = url;
-            // setImage(null);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  //   Function to upload data to Firestore
-  const uploadDataToFirestore = async (
+  const storeDataInFirestore = async (
     title,
     description,
     link,
     imageUrl,
-    account,
-    displayname
+    displayName,
+    email
   ) => {
     try {
       // Reference to the Firestore collection
-      // uploadpost;
       const firestoreCollection = collection(firestore, 'posts');
 
       // Add a new document with the provided data
@@ -239,87 +227,95 @@ function CreatePage() {
         description: description,
         link: link,
         imageUrl: imageUrl,
-        account: account,
-        displayname: displayname,
-        id: account + imageUrl,
+        displayName: displayName,
+        email: email,
       });
 
+      // Log the document ID
       console.log('Document written with ID: ', docRef.id);
     } catch (error) {
       console.error('Error adding document: ', error);
     }
   };
 
-  const gettitle = () => {
-    return document.getElementById('title').value;
+  // Function to handle publishing
+  const handlePublish = async () => {
+    // Get other data needed for Firestore document
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const link = document.getElementById('link').value;
+    const email = localStorage.getItem('useremail');
+    const displayName = localStorage.getItem('username');
+
+    if (imageUrl != '') {
+      // Call the function to store data in Firestore
+      await storeDataInFirestore(
+        title,
+        description,
+        link,
+        imageUrl,
+        displayName,
+        email
+      );
+    } else {
+      console.error('Image URL is null. Cannot store data in Firestore.');
+    }
   };
-  const getdesc = () => {
-    return document.getElementById('description').value;
-  };
-  const getlink = () => {
-    return document.getElementById('link').value;
-  };
+
   return (
     <div className="createpage">
       <div className="createpinhead">
         <div className="headtext">Create Pin</div>
-        <div
-          className="publishbutton"
-          onClick={async () => {
-            uploadpost(),
-              uploadDataToFirestore(
-                gettitle(),
-                getdesc(),
-                getlink(),
-
-                localStorage.getItem('imgurl'),
-                // imageUrlfinal,
-                localStorage.getItem('useremail'),
-                localStorage.getItem('username')
-              ).then(() => {
-                document.getElementById('title').value = '';
-                document.getElementById('description').value = '';
-                document.getElementById('link').value = '';
-                setImage(null);
-              });
-          }}
-        >
+        <div className="publishbutton" onClick={handlePublish}>
           Publish
         </div>
       </div>
+
       <div className="uploaddiv">
         <div className="uploadimagediv">
-          <div className="displaydiv">
-            {image ? (
-              <div className="displaydiv">
-                <img
-                  src={URL.createObjectURL(image)}
-                  alt="Selected"
-                  className="displayimage"
-                />
-              </div>
-            ) : (
-              <div className="displaydiv">
-                <img
-                  src={placeholderimage}
-                  alt="Placeholder"
-                  className="displayimage"
-                />
-              </div>
-            )}
-          </div>
+          {/* Display the selected image */}
+          {selectedImage && (
+            <div className="displaydiv">
+              <img
+                src={selectedImage}
+                alt="Selected"
+                style={{
+                  maxWidth: '60%',
+                  maxHeight: '450px',
+                  borderRadius: '20px',
+                  marginBottom: '30px',
+                }}
+              />
+            </div>
+          )}
+          {/* Display a placeholder image if no image is selected */}
+          {!selectedImage && (
+            <div>
+              <img
+                src={placeholderimage}
+                alt="Placeholder"
+                style={{
+                  maxWidth: '100%',
+                  // maxHeight: '450px',
+                  borderRadius: '20px',
+                  marginBottom: '30px',
+                }}
+              />
+            </div>
+          )}
+          {/* File input element */}
           <input
             type="file"
-            onChange={handleImageChange}
-            accept="image/*"
-            className="chooseimagebutton"
+            accept="image/*" // Allow only image files
+            onChange={handleFileChange} // Call handleFileChange function when a file is selected
           />
         </div>
+
         <div className="uploaddetailsdiv">
           <div class="input-group title">
             <label class="label">Title</label>
             <input
-              autocomplete="off"
+              autoComplete="off"
               name="Email"
               id="title"
               class="input"
@@ -330,7 +326,7 @@ function CreatePage() {
           <div class="input-group title">
             <label class="label">Description</label>
             <textarea
-              autocomplete="off"
+              autoComplete="off"
               name="Email"
               id="description"
               class="input"
@@ -342,7 +338,7 @@ function CreatePage() {
           <div class="input-group title">
             <label class="label">Link</label>
             <input
-              autocomplete="off"
+              autoComplete="off"
               name="Email"
               id="link"
               class="input"
