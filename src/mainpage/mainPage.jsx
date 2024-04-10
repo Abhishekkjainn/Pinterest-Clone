@@ -5,6 +5,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
 import { firestore } from '../../firebase';
 import { v4 as uuidv4 } from 'uuid';
+import Popup from 'reactjs-popup';
 
 export default function MainPage() {
   const [activeTag, setActiveTag] = useState('home');
@@ -159,6 +160,8 @@ function HomePage() {
 function ExplorePage() {
   return <div>Explorepage</div>;
 }
+
+/*Complete Create Page*/
 let downloadUrl = '';
 
 function CreatePage() {
@@ -241,24 +244,34 @@ function CreatePage() {
   // Function to handle publishing
   const handlePublish = async () => {
     // Get other data needed for Firestore document
-    const title = document.getElementById('title').value;
-    const description = document.getElementById('description').value;
-    const link = document.getElementById('link').value;
-    const email = localStorage.getItem('useremail');
-    const displayName = localStorage.getItem('username');
+    var title = document.getElementById('title').value;
+    var description = document.getElementById('description').value;
+    var link = document.getElementById('link').value;
+    var email = localStorage.getItem('useremail');
+    var displayName = localStorage.getItem('username');
 
-    if (imageUrl != '') {
-      // Call the function to store data in Firestore
+    if (downloadUrl != '' && title != '' && description != '' && link != '') {
       await storeDataInFirestore(
         title,
         description,
         link,
-        imageUrl,
+        downloadUrl,
         displayName,
         email
-      );
+      )
+        .then(() => {
+          // Clear input fields after successful upload
+          document.getElementById('title').value = '';
+          document.getElementById('description').value = '';
+          document.getElementById('link').value = '';
+          setSelectedImage(null);
+          downloadUrl = ''; // Reset download URL
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     } else {
-      console.error('Image URL is null. Cannot store data in Firestore.');
+      console.error('Insufficient Data here to Upload.');
     }
   };
 
@@ -312,36 +325,36 @@ function CreatePage() {
         </div>
 
         <div className="uploaddetailsdiv">
-          <div class="input-group title">
-            <label class="label">Title</label>
+          <div className="input-group title">
+            <label className="label">Title</label>
             <input
               autoComplete="off"
               name="Email"
               id="title"
-              class="input"
+              className="input"
               type="text"
             />
             <div></div>
           </div>
-          <div class="input-group title">
-            <label class="label">Description</label>
+          <div className="input-group title">
+            <label className="label">Description</label>
             <textarea
               autoComplete="off"
               name="Email"
               id="description"
-              class="input"
+              className="input"
               type="text"
               draggable
             />
             <div></div>
           </div>
-          <div class="input-group title">
-            <label class="label">Link</label>
+          <div className="input-group title">
+            <label className="label">Link</label>
             <input
               autoComplete="off"
               name="Email"
               id="link"
-              class="input"
+              className="input"
               type="text"
             />
             <div></div>
