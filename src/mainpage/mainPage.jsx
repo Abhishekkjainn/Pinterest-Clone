@@ -4,9 +4,7 @@ import { imageDB } from '../../firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { firestore } from '../../firebase';
-import { Link } from 'react-router-dom';
 import { auth } from '../../firebase';
-import { firebase } from '../../firebase';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function MainPage({ setLoggedin }) {
@@ -50,9 +48,7 @@ function HeaderMainPage({ activeTag, handleTagClick, setLoggedin }) {
     auth
       .signOut()
       .then(() => {
-        // Sign-out successful
         console.log('Sign-out successful');
-        // Clear local storage
         localStorage.removeItem('username');
         localStorage.removeItem('useremail');
         localStorage.removeItem('userphoto');
@@ -201,7 +197,8 @@ function HomePage({ activeTag, handleTagClick }) {
             displayimageurl: data.imageUrl, // Assuming imageUrl is the field name in your Firestore document
             link: data.link,
             maxht: '450px',
-            name: data.displayName, // Assuming displayName is the field name in your Firestore document
+            name: data.displayName,
+            likes: data.likes, // Assuming displayName is the field name in your Firestore document
           });
           ind++;
         });
@@ -234,7 +231,8 @@ function HomePage({ activeTag, handleTagClick }) {
     link,
     usernameprev,
     useremailprev,
-    docid
+    docid,
+    likes
   ) {
     localStorage.setItem('imageprev', img);
     localStorage.setItem('descriptionprev', desc);
@@ -243,6 +241,7 @@ function HomePage({ activeTag, handleTagClick }) {
     localStorage.setItem('nameprev', usernameprev);
     localStorage.setItem('emailprev', useremailprev);
     localStorage.setItem('docidprev', docid);
+    localStorage.setItem('likesprev', likes);
     handleTagClick('details');
   }
 
@@ -270,7 +269,8 @@ function HomePage({ activeTag, handleTagClick }) {
                     item.link,
                     item.name,
                     item.accountid,
-                    item.id
+                    item.id,
+                    item.likes
                   )
                 }
               />
@@ -343,7 +343,8 @@ function CreatePage() {
     link,
     imageUrl,
     displayName,
-    email
+    email,
+    likes
   ) => {
     try {
       // Reference to the Firestore collection
@@ -357,6 +358,7 @@ function CreatePage() {
         imageUrl: imageUrl,
         displayName: displayName,
         email: email,
+        likes: 0,
       });
 
       // Log the document ID
