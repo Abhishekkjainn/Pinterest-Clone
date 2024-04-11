@@ -24,6 +24,13 @@ This project is a Pinterest clone built using React, Vite, and Firebase. It offe
 - Clicking on a post opens a detailed view where users can see the image, title, description, link, and other details of the post.
 - Users can also like or bookmark posts for future reference.
 
+### Future Features
+
+- **Liking and Following**: Users will be able to like posts and follow other users to see their posts in their feed.
+- **User Profile**: Each user will have a profile page displaying all the posts they have made. It will also include analytics such as likes count, comments, and other engagement metrics.
+- **Comments**: Users will be able to leave comments on posts, allowing for interaction and discussion within the community.
+
+
 ## Technologies Used
 
 - **React**: The frontend of the application is built using React, a popular JavaScript library for building user interfaces.
@@ -31,5 +38,5 @@ This project is a Pinterest clone built using React, Vite, and Firebase. It offe
 - **Firebase**: Firebase is utilized for backend services including Authentication, Firestore for storing post data, and Storage for uploading images.
 - **HTML/CSS**: Basic HTML and CSS are used for styling and structuring the components and pages.
 
-
+Link for the project [ https://pintrestclone-seven.vercel.app ]
 
