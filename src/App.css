@@ -231,7 +231,7 @@ body{
 /*details page*/
 .detailspage{
   height: 100vh;
-  width: 100%;background-color: #05060f;
+  /* width: 100%;background-color: #05060f; */
 }
 
 
@@ -363,3 +363,139 @@ padding-bottom: 30px;
 
 
 /*Explorepage Styling*/
+
+/*Details Page*/
+
+.detailspage{
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.centerdiv{
+  width:65% ;
+  height: 100vh;
+  margin-top: 95px;
+  margin-bottom: 30px;
+  border-radius: 30px;
+  /* background-color: #05060f; */
+  overflow: hidden;
+  display: flex;justify-content: center;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.imageprevdiv{
+  width: 50%;
+  height: 100%;
+  background-color: aqua;
+}
+.imagedetailsdiv{
+  width: 50%;
+  height: 100%;
+}
+.detailsprevheader{
+  width: 100%;
+  height: 100px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.oneprevheader{
+  width: 35%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.uploadimageimg{
+  width: 25px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.twoprevheader{
+  width: 65%;
+  height: 100%;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+.savebutton{
+  width:min-content;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: red;
+  border-radius: 40px;
+  color: white;
+  margin-right: 30px;
+  font-weight: 600;
+}
+.linkprev{
+  font-size: 12px;
+  color: black;
+  font-weight: 600;
+  padding-left: 45px;
+}
+.linkprev a{
+  color: black;
+}
+.titleprev{
+  font-size: 26px;
+  color: black;
+  font-weight: 600;
+  width: 80%;
+  word-wrap: break-word;
+  padding-left: 40px;
+  margin-top: 20px;
+}
+.descprev{
+  font-size: 20px;
+  color: rgb(82, 82, 82);
+  font-weight: 600;
+  width: 80%;
+  word-wrap: break-word;
+  padding-left: 40px;
+  margin-top: 0px;
+}
+.profilediv{
+  width: 80%;
+  height: 80px;
+  /* background-color: #cdcdcd; */
+  margin-left: 40px;
+  margin-top: 20px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.profone{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+.profilepictureprev{
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  background-color: grey;
+  margin-left: 0px;
+  margin-right: 10px;
+}
+
+/*backbutton*/
+.backbuttondetails{
+  position: fixed;
+  top: 90px;
+  left: 30px;
+}
+.backbuttondetails:hover{
+  cursor: pointer;
+}
+.backimg{
+  width: 30px;
+}

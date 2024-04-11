@@ -4,7 +4,7 @@ import { imageDB } from '../../firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { firestore } from '../../firebase';
-
+import { Link } from 'react-router-dom';
 import { auth } from '../../firebase';
 import { firebase } from '../../firebase';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,7 +23,10 @@ export default function MainPage({ setLoggedin }) {
         handleTagClick={handleTagClick}
         setLoggedin={setLoggedin}
       />
-      <MainScreenDecider activeTag={activeTag} />
+      <MainScreenDecider
+        activeTag={activeTag}
+        handleTagClick={handleTagClick}
+      />
     </div>
   );
 }
@@ -158,17 +161,19 @@ function HeaderMainPage({ activeTag, handleTagClick, setLoggedin }) {
   );
 }
 
-function MainScreenDecider({ activeTag }) {
+function MainScreenDecider({ activeTag, handleTagClick }) {
   return activeTag === 'home' ? (
-    <HomePage />
+    <HomePage handleTagClick={handleTagClick} />
   ) : activeTag === 'explore' ? (
     <ExplorePage />
+  ) : activeTag === 'details' ? (
+    <DetailsPage handleTagClick={handleTagClick} />
   ) : (
     <CreatePage />
   );
 }
 
-function HomePage() {
+function HomePage({ activeTag, handleTagClick }) {
   const [items, setItems] = useState([]);
   var ind = 0;
 
@@ -222,6 +227,25 @@ function HomePage() {
     columns[shortestColumnIndex].push(item);
   });
 
+  function savedata(
+    img,
+    desc,
+    title,
+    link,
+    usernameprev,
+    useremailprev,
+    docid
+  ) {
+    localStorage.setItem('imageprev', img);
+    localStorage.setItem('descriptionprev', desc);
+    localStorage.setItem('titleprev', title);
+    localStorage.setItem('linkprev', link);
+    localStorage.setItem('nameprev', usernameprev);
+    localStorage.setItem('emailprev', useremailprev);
+    localStorage.setItem('docidprev', docid);
+    handleTagClick('details');
+  }
+
   return (
     <div className="homepage">
       {columns.map((column, index) => (
@@ -236,8 +260,19 @@ function HomePage() {
             >
               <img
                 src={item.displayimageurl}
-                alt=""
+                alt={item.name}
                 className="displayimageimage"
+                onClick={() =>
+                  savedata(
+                    item.displayimageurl,
+                    item.description,
+                    item.title,
+                    item.link,
+                    item.name,
+                    item.accountid,
+                    item.id
+                  )
+                }
               />
             </div>
           ))}
@@ -448,6 +483,67 @@ function CreatePage() {
               type="text"
             />
             <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DetailsPage({ activeTag, handleTagClick }) {
+  return (
+    <div className="detailspage">
+      <div className="backbuttondetails" onClick={() => handleTagClick('home')}>
+        <img src="back.png" alt="" className="backimg" />
+      </div>
+      <div className="centerdiv">
+        <div
+          className="imageprevdiv"
+          style={{
+            backgroundImage: `url(${localStorage.getItem('imageprev')})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            width: '50%', // Set width to fill the container
+            height: '100%', // Set height to fill the container
+          }}
+        >
+          {/* <img
+            src={localStorage.getItem('imageprev')}
+            alt={localStorage.getItem('nameprev')}
+            className="imgprevimage"
+          /> */}
+        </div>
+        <div className="imagedetailsdiv">
+          <div className="detailsprevheader">
+            <div className="oneprevheader">
+              <img src="upload.png" alt="upload" className="uploadimageimg" />
+              <img src="more.png" alt="upload" className="uploadimageimg" />
+            </div>
+            <div className="twoprevheader">
+              <div className="savebutton">Save</div>
+            </div>
+          </div>
+
+          <div className="linkprev">
+            <a href={localStorage.getItem('linkprev')}>
+              {localStorage.getItem('linkprev')}
+            </a>
+          </div>
+
+          <div className="titleprev">{localStorage.getItem('titleprev')}</div>
+
+          <div className="descprev">
+            {localStorage.getItem('descriptionprev')}
+          </div>
+
+          <div className="profilediv">
+            <div className="profone">
+              <div className="profilepictureprev"></div>
+              <div className="profilenameprev">
+                {localStorage.getItem('nameprev')}
+              </div>
+            </div>
           </div>
         </div>
       </div>
